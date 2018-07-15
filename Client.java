@@ -1,4 +1,4 @@
-package client;//Distributed Systems Fall 2017
+//Distributed Systems Fall 2017
 //Homework 1
 //Patrick Sigourney & Howie Benefiel
 
