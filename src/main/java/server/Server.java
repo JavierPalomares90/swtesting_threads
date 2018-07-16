@@ -1,6 +1,4 @@
-package server;//Distributed Systems Fall 2017
-//Homework 1
-//Patrick Sigourney & Howie Benefiel
+package server;
 
 import java.util.*;
 import java.io.*;
@@ -55,51 +53,28 @@ class Listener implements Runnable
 {
     public String protocol;
     public int tcpPort;
-    public int udpPort;
 
     public Listener(String protocolParam, int portParam)
     {
         protocol = protocolParam;
-        if (protocolParam == "U") udpPort = portParam;
-        if (protocolParam == "T") tcpPort = portParam;
+        tcpPort = portParam;
     }
 
     public void run()
     {
         try
         {
-            switch (protocol)
+            ServerSocket tcpServerSocket = new ServerSocket(tcpPort);
+            Socket tcpClientSocket;
+            while (true)
             {
-                case "U":
-                    DatagramSocket udpSocket = new DatagramSocket(udpPort);
-                    DatagramPacket recvPacket;
-                    int bufferLen = 1024;
-                    byte[] udpBuff;
+                tcpClientSocket = tcpServerSocket.accept();
 
-                    while (true)
-                    {
-                        udpBuff = new byte[bufferLen];
-                        recvPacket = new DatagramPacket(udpBuff, udpBuff.length);
-                        udpSocket.receive(recvPacket);
-
-                        //Spawn off a UDP main.java.server.ServerThread instance to process and reply to the received packet
-                        Runnable udpServerThread = new ServerThread(recvPacket, udpPort);
-                        new Thread(udpServerThread).start();
-                    }
-
-                case "T":
-                    ServerSocket tcpServerSocket = new ServerSocket(tcpPort);
-                    Socket tcpClientSocket;
-
-                    while (true)
-                    {
-                        tcpClientSocket = tcpServerSocket.accept();
-
-                        //Spawn off a TCP main.java.server.ServerThread instance to read the buffer from the connection which was just accepted
-                        Runnable tcpServerThread = new ServerThread(tcpClientSocket, tcpPort);
-                        new Thread(tcpServerThread).start();
-                    }
+                //Spawn off a TCP main.java.server.ServerThread instance to read the buffer from the connection which was just accepted
+                Runnable tcpServerThread = new ServerThread(tcpClientSocket, tcpPort);
+                new Thread(tcpServerThread).start();
             }
+
         } catch (SocketException se)
         {
             System.err.println(se);
@@ -118,11 +93,10 @@ class ServerThread implements Runnable
     public static ArrayList<Order> orderList = new ArrayList<Order>();
     public static int maxOrderID = 100;  //Initialize the orderIDs
 
-    public String protocol;  //T or U
+    public String protocol;  //T = TCP
     public int port;
 
     public Socket tcpClientSocket;
-    public DatagramPacket udpRecvPacket;
 
     public ServerThread(Socket tcpClientSocketParam, int tcpPort)
     {
@@ -132,13 +106,6 @@ class ServerThread implements Runnable
         tcpClientSocket = tcpClientSocketParam;
     }
 
-    public ServerThread(DatagramPacket udpRecvPacketParam, int udpPort)
-    {
-        //Constructor for incoming UDP datagram
-        protocol = "U";
-        port = udpPort;
-        udpRecvPacket = udpRecvPacketParam;
-    }
 
 
     public static String processMessage(String[] msgArray)
@@ -216,7 +183,7 @@ class ServerThread implements Runnable
         return replyMessage;
     }
 
-    ;
+
 
     public static String search(String[] msgArray)
     {
@@ -234,7 +201,6 @@ class ServerThread implements Runnable
         return replyMessage;
     }
 
-    ;
 
     public static String list()
     {
@@ -245,64 +211,28 @@ class ServerThread implements Runnable
         return replyMessage;
     }
 
-    ;
-
 
     public void run()
     {
-
         try
         {
             String[] msgArray;
-            switch (protocol)
+            String replyMessage; // = processMessage(msgArray);
+            //We have received a TCP socket from the client.  Receive message and reply.
+
+            BufferedReader inputReader = new BufferedReader(new InputStreamReader(tcpClientSocket.getInputStream()));
+            PrintWriter outputWriter = new PrintWriter(tcpClientSocket.getOutputStream(), true);
+            String inputLine = inputReader.readLine();
+            if (inputLine.length() > 0)
             {
-                case "U":
-                    //We have received a UDP DatagramPacket; process it and reply back
-
-                    //Pull out message and sender IP
-                    InetAddress msgAddr = udpRecvPacket.getAddress();
-                    String msgData = new String(udpRecvPacket.getData());
-                    msgArray = msgData.trim().split("\\s+");
-
-                    DatagramSocket udpOutboundSocket = new DatagramSocket();
-
-                    //Process the message
-                    String replyMessage = processMessage(msgArray);
-
-                    //Generate reply
-                    byte[] payload = new byte[replyMessage.length()];
-                    payload = replyMessage.getBytes();
-                    DatagramPacket sendPacket = new DatagramPacket(payload, payload.length, msgAddr, port);
-
-                    //Send reply
-                    udpOutboundSocket.send(sendPacket);
-                    udpOutboundSocket.close();
-                    break;
-
-                case "T":
-                    //We have received a TCP socket from the client.  Receive message and reply.
-
-                    BufferedReader inputReader = new BufferedReader(new InputStreamReader(tcpClientSocket.getInputStream()));
-                    PrintWriter outputWriter = new PrintWriter(tcpClientSocket.getOutputStream(), true);
-
-                    String inputLine = inputReader.readLine();
-
-                    if (inputLine.length() > 0)
-                    {
-                        msgArray = inputLine.trim().split("\\s+");
-
-                        replyMessage = processMessage(msgArray);
-
-                        String[] replyArray = replyMessage.split(System.getProperty("line.separator"));
-
-                        for (int x = 0; x < replyArray.length; x++)
-                            outputWriter.write(replyArray[x]);
-
-                        outputWriter.flush();
-                        outputWriter.close();
-                    }
-                    break;
+                msgArray = inputLine.trim().split("\\s+");
+                replyMessage = processMessage(msgArray);
+                String[] replyArray = replyMessage.split(System.getProperty("line.separator"));
+                for (int x = 0; x < replyArray.length; x++) outputWriter.write(replyArray[x]);
+                outputWriter.flush();
+                outputWriter.close();
             }
+
         } catch (SocketException se)
         {
             System.err.println(se);
@@ -319,20 +249,17 @@ public class Server
     public static void main(String[] args) throws IOException
     {
         int tcpPort;
-        int udpPort;
-        if (args.length != 3)
+        if (args.length != 2)
         {
-            System.out.println("ERROR: Provide 3 arguments");
+            System.out.println("ERROR: Provide 2 arguments");
             System.out.println("\t(1) <tcpPort>: the port number for TCP connection");
-            System.out.println("\t(2) <udpPort>: the port number for UDP connection");
             System.out.println("\t(3) <file>: the file of inventory");
 
             System.exit(-1);
         }
 
         tcpPort = Integer.parseInt(args[0]);
-        udpPort = Integer.parseInt(args[1]);
-        String fileName = args[2];
+        String fileName = args[1];
 
         // parse and sort the inventory file
         FileReader invFile = new FileReader(fileName);
@@ -352,14 +279,8 @@ public class Server
         }
         Collections.sort(ServerThread.invList, InventoryItem.ItemComparator);  //Sort the inventory items by name
 
-
         //spawn tcpListener;
         Runnable tr = new Listener("T", tcpPort);
         new Thread(tr).start();
-
-        //spawn udpListener;
-        Runnable ur = new Listener("U", udpPort);
-        new Thread(ur).start();
-
     }
 }
