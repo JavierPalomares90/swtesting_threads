@@ -1,2 +1,2 @@
-# distributed-hw
-Homework for Distributed Systems
+# Software Testing Project - Testing Multithreaded Applications
+
