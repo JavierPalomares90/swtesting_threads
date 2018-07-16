@@ -1,2 +1,3 @@
-# Software Testing Project - Testing Multithreaded Applications
+# Software Testing Project
+Testing Multithreaded Applications
 
