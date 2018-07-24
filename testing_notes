@@ -1,3 +1,12 @@
+TODO:
+Break out the inventory.txt loading process into a separate method so it can be called easily by tests.
+Create unit tests for the various functions.
+Create integration test against Server.main() using Runnable and spawning off multiple test clients.
+--Integration test can use Verify to randomize the inputs (list/purchase/search/cancel)
+
+
+
+
 **Server Methods:**
 
 Class InventoryItem
