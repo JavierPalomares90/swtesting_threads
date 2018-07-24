@@ -175,11 +175,11 @@ class ServerThread implements Runnable
                         }
                     }
                     orderList.remove(orderList.indexOf(myOrder));
-                    return replyMessage = "main.java.server.Order " + msgArray[1] + " is cancelled";
+                    return replyMessage = "Order " + msgArray[1] + " is cancelled";
                 }
             }
             if (foundOrder == 0) return replyMessage = msgArray[1] + " not found, no such order";
-        } else return replyMessage = "main.java.server.Order ID is not a number";
+        } else return replyMessage = "Order ID is not a number";
         return replyMessage;
     }
 
@@ -206,7 +206,7 @@ class ServerThread implements Runnable
     {
         String replyMessage = "";
         for (InventoryItem myItem : invList)
-            replyMessage += myItem.name + " " + myItem.qty + "\n";
+            replyMessage += myItem.name + " " + myItem.qty + "; \n";
 
         return replyMessage;
     }
