@@ -38,7 +38,7 @@ public class Client {
                 //Receive reply
                 String recvLine = "";
                 while((recvLine = inputReader.readLine()) != null) System.out.println(recvLine);
-                tcpSocket.close();
+                //tcpSocket.close();
             } catch(IOException ioe){System.err.println(ioe);}
             break;
    }   }   }
