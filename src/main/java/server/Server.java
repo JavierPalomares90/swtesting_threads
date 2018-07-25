@@ -30,6 +30,10 @@ class InventoryItem
             return item1Name.compareTo(item2Name);
         }
     };
+
+    public boolean repOk(){
+        return this.name != null;
+    }
 }
 
 class Order
@@ -70,7 +74,8 @@ class Listener implements Runnable
             {
                 tcpClientSocket = tcpServerSocket.accept();
 
-                //Spawn off a TCP main.java.server.ServerThread instance to read the buffer from the connection which was just accepted
+                //Spawn off a TCP main.java.server.ServerThread instance to read the buffer
+                // from the connection which was just accepted
                 Runnable tcpServerThread = new ServerThread(tcpClientSocket, tcpPort);
                 new Thread(tcpServerThread).start();
             }
@@ -110,20 +115,19 @@ class ServerThread implements Runnable
 
     public static String processMessage(String[] msgArray)
     {
-        String replyMessage = "";
         switch (msgArray[0])
         {
             case "purchase":
-                return replyMessage = purchase(msgArray);
+                return purchase(msgArray);
 
             case "cancel":
-                return replyMessage = cancel(msgArray);
+                return cancel(msgArray);
 
             case "search":
-                return replyMessage = search(msgArray);
+                return search(msgArray);
 
             case "list":
-                return replyMessage = list();
+                return list();
         }
         return "Invalid request";
     }
@@ -145,12 +149,12 @@ class ServerThread implements Runnable
                         Order myOrder = new Order(maxOrderID, msgArray[1], msgArray[2], Integer.parseInt(msgArray[3]));
                         orderList.add(myOrder);
                         myItem.updateQty(Integer.parseInt(msgArray[3]));
-                        return replyMessage = "Your order has been placed, " + maxOrderID + ", " + msgArray[2] + ", " + msgArray[3];
-                    } else return replyMessage = "Not Available - Not enough items";
+                        return "Your order has been placed, " + maxOrderID + ", " + msgArray[2] + ", " + msgArray[3];
+                    } else return "Not Available - Not enough items";
                 }
             }
-            if (foundProd == 0) return replyMessage = "Not Available - We do not sell this product";
-        } else return replyMessage = "Incorrect number of parameters for PURCHASE";
+            if (foundProd == 0) return "Not Available - We do not sell this product";
+        } else return "Incorrect number of parameters for PURCHASE";
         return replyMessage;
     }
 
@@ -246,7 +250,25 @@ class ServerThread implements Runnable
 
 public class Server
 {
-    public static void main(String[] args) throws IOException
+
+    public static void processInventory(String fileName){
+        try {
+            FileReader invFile = new FileReader(fileName);
+            BufferedReader invBuff = new BufferedReader(invFile);
+            String invLine = null;
+            while ((invLine = invBuff.readLine()) != null) {
+                if (invLine.length() > 0) {
+                    String[] itemArr = invLine.split("\\s+");
+                    if (itemArr.length == 2) {
+                        InventoryItem newItem = new InventoryItem(itemArr[0], Integer.parseInt(itemArr[1]));
+                        ServerThread.invList.add(newItem);
+                    }
+                }
+            }
+        }catch(IOException e){System.out.println("IOException reading inventory file; " + e);}
+    }
+
+    public static void main(String[] args)
     {
         int tcpPort;
         if (args.length != 2)
@@ -261,22 +283,8 @@ public class Server
         tcpPort = Integer.parseInt(args[0]);
         String fileName = args[1];
 
-        // parse and sort the inventory file
-        FileReader invFile = new FileReader(fileName);
-        BufferedReader invBuff = new BufferedReader(invFile);
-        String invLine = null;
-        while ((invLine = invBuff.readLine()) != null)
-        {
-            if (invLine.length() > 0)
-            {
-                String[] itemArr = invLine.split("\\s+");
-                if (itemArr.length == 2)
-                {
-                    InventoryItem newItem = new InventoryItem(itemArr[0], Integer.parseInt(itemArr[1]));
-                    ServerThread.invList.add(newItem);
-                }
-            }
-        }
+        processInventory(fileName);
+
         Collections.sort(ServerThread.invList, InventoryItem.ItemComparator);  //Sort the inventory items by name
 
         //spawn tcpListener;
