@@ -6,34 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-/**
- *
- * Functions to Test:
- *
- Class InventoryItem
-    InventoryItem(String nameParam, int qtyParam)
-    void updateQty(int qtyChange)
-    Comparator<InventoryItem>
-
- Class Order
-    Order(int idParam, String usernameParam, String productNameParam, int qtyParam)
-
- Class Listener implements Runnable
-    Listener(String protocolParam, int portParam)
-    void run()
-
- Class ServerThread implements Runnable
-    ServerThread(Socket tcpClientSocketParam, int tcpPort)
-    String processMessage(String[] msgArray)
-    String purchase(String[] msgArray)
-    String cancel(String[] msgArray)
-    String search(String[] msgArray)
-    String list()
-    void run()
-
- Class Server
-    void main(String[] args)
- **/
 
 public class ServerTest
 {
@@ -49,9 +21,6 @@ public class ServerTest
         integrationTestSuite();
         multiThreadTestSuite();
 
-        /** TODO: Call unit test **/
-
-        /** TODO: Complete testing **/
     }
 
     @Test
@@ -66,11 +35,16 @@ public class ServerTest
 
     @Test
     public void integrationTestSuite(){
+        //TODO: Send single commands (list, purchase, search, cancel) to Server and validate response
 
     }
 
     @Test
     public void multiThreadTestSuite(){
+        //TODO: Start 1 server process, then spawn off n threads which will throw randomized (but valid)
+        //TODO:     commands to the server simultaneously.
+        //TODO:     Create a grammar and use Verify to generate the commands.
+
 
     }
 
@@ -130,21 +104,35 @@ public class ServerTest
 
     @Test
     public void OrderUnitTests(){
-
+        //TODO: Test Order constructor:
+        //TODO:     Order(int idParam, String usernameParam, String productNameParam, int qtyParam)
     }
 
     @Test
     public void ListenerUnitTests(){
+        //TODO: Test Listener constructor and thread spawning
+        //TODO:    Listener(String protocolParam, int portParam)
+        //TODO:    void run()
 
     }
 
     @Test
     public void ServerThreadUnitTests(){
+        //TODO: Test ServerThread, individual functions, and thread spawning:
+        //TODO:     ServerThread(Socket tcpClientSocketParam, int tcpPort)
+        //TODO:     String processMessage(String[] msgArray)
+        //TODO:     String purchase(String[] msgArray)
+        //TODO:     String cancel(String[] msgArray)
+        //TODO:     String search(String[] msgArray)
+        //TODO:     String list()
+        //TODO:     void run()
 
     }
 
     @Test
     public void ServerUnitTests(){
+        //TODO: Test main:
+        //TODO:     void main(String[] args)
 
     }
 }
