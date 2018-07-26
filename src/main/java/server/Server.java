@@ -1,5 +1,6 @@
 package server;
 
+import java.security.InvalidParameterException;
 import java.util.*;
 import java.io.*;
 import java.net.*;
@@ -12,6 +13,8 @@ class InventoryItem
 
     public InventoryItem(String nameParam, int qtyParam)
     {
+        if(nameParam == null || nameParam.length() <= 0) throw new InvalidParameterException();
+
         name = nameParam;
         qty = qtyParam;
     }
@@ -45,6 +48,9 @@ class Order
 
     public Order(int idParam, String usernameParam, String productNameParam, int qtyParam)
     {
+        if(usernameParam == null || usernameParam.length() <= 0) throw new InvalidParameterException();
+        if(productNameParam == null || productNameParam.length() <= 0) throw new InvalidParameterException();
+
         id = idParam;
         username = usernameParam;
         productName = productNameParam;
@@ -115,6 +121,8 @@ class ServerThread implements Runnable
 
     public static String processMessage(String[] msgArray)
     {
+        if(msgArray == null || msgArray.length <= 0) throw new InvalidParameterException();
+
         switch (msgArray[0])
         {
             case "purchase":
@@ -134,6 +142,7 @@ class ServerThread implements Runnable
 
     public static String purchase(String[] msgArray)
     {
+        if(msgArray == null || msgArray.length <= 0) throw new InvalidParameterException();
         int foundProd = 0;
         String replyMessage = "";
         if (msgArray.length == 4)
@@ -162,6 +171,7 @@ class ServerThread implements Runnable
 
     public static String cancel(String[] msgArray)
     {
+        if(msgArray == null || msgArray.length <= 0) throw new InvalidParameterException();
         int foundOrder = 0;
         String replyMessage = "";
         if (msgArray[1].matches("^\\d+$"))
@@ -191,6 +201,7 @@ class ServerThread implements Runnable
 
     public static String search(String[] msgArray)
     {
+        if(msgArray == null || msgArray.length <= 0) throw new InvalidParameterException();
         int foundOrder = 0;
         String replyMessage = "";
         for (Order myOrder : orderList)
@@ -220,17 +231,14 @@ class ServerThread implements Runnable
     {
         try
         {
-            String[] msgArray;
-            String replyMessage; // = processMessage(msgArray);
             //We have received a TCP socket from the client.  Receive message and reply.
-
             BufferedReader inputReader = new BufferedReader(new InputStreamReader(tcpClientSocket.getInputStream()));
             PrintWriter outputWriter = new PrintWriter(tcpClientSocket.getOutputStream(), true);
             String inputLine = inputReader.readLine();
             if (inputLine.length() > 0)
             {
-                msgArray = inputLine.trim().split("\\s+");
-                replyMessage = processMessage(msgArray);
+                String[] msgArray = inputLine.trim().split("\\s+");
+                String replyMessage = processMessage(msgArray);
                 String[] replyArray = replyMessage.split(System.getProperty("line.separator"));
                 for (int x = 0; x < replyArray.length; x++) outputWriter.write(replyArray[x]);
                 outputWriter.flush();
@@ -252,6 +260,7 @@ public class Server
 {
 
     public static void processInventory(String fileName){
+        if(fileName == null || fileName.length() <= 0) throw new InvalidParameterException();
         try {
             FileReader invFile = new FileReader(fileName);
             BufferedReader invBuff = new BufferedReader(invFile);
