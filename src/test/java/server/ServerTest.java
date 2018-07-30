@@ -16,6 +16,7 @@ public class ServerTest
         UnitTestSuite.runUnitTestSuite();
         IntegrationTestSuite.runIntegrationTestSuite();
         MultiThreadTestSuite.runMultiThreadTestSuite();
+        //test
 
     }
 
