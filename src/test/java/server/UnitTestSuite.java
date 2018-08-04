@@ -4,6 +4,10 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public class UnitTestSuite {
 
@@ -18,7 +22,7 @@ public class UnitTestSuite {
 
     @Test
     public void InventoryItemUnitTests(){
-        ArrayList<InventoryItem> inventoryList = new ArrayList<>();
+        List<InventoryItem> inventoryList = new ArrayList<>();
 
         //Test Qty Values
         InventoryItem inv1 = new InventoryItem("aaa9b9", -1);
@@ -66,8 +70,15 @@ public class UnitTestSuite {
 
         //Test comparator
         Collections.sort(inventoryList, InventoryItem.ItemComparator);
-        //TODO: Test to see if the inventoryList is sorted after Collections.sort is called.
-
+        Iterator<InventoryItem> iterator = inventoryList.iterator();
+        InventoryItem curr = iterator.next();
+        while(iterator.hasNext())
+        {
+            InventoryItem next = iterator.next();
+            // curr must be lexographically less than or equal ot next.
+            assertTrue(InventoryItem.ItemComparator.compare(curr,next) <= 0);
+            curr = next;
+        }
     }
 
     @Test
