@@ -12,13 +12,6 @@ import static org.junit.Assert.assertTrue;
 
 public class UnitTestSuite {
 
-    public void runUnitTestSuite(){
-        InventoryItemUnitTests();
-        OrderUnitTests();
-        ListenerUnitTests();
-        ServerThreadUnitTests();
-        ServerUnitTests();
-    }
 
     @Test
     public void InventoryItemUnitTests(){
@@ -79,12 +72,6 @@ public class UnitTestSuite {
             assertTrue(InventoryItem.ItemComparator.compare(curr,next) <= 0);
             curr = next;
         }
-    }
-
-    public void OrderUnitTests(){
-        OrderNullProductnameTest();
-        OrderNullUsernameTest();
-        OrderConstructorTest();
     }
 
     @Test(expected = InvalidParameterException.class)
