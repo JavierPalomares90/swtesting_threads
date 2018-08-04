@@ -13,9 +13,12 @@ public class ServerTest
 
         System.out.println("Size of inventory list: " + ServerThread.invList.size());
 
-        UnitTestSuite.runUnitTestSuite();
-        IntegrationTestSuite.runIntegrationTestSuite();
-        MultiThreadTestSuite.runMultiThreadTestSuite();
+        UnitTestSuite unitTests = new UnitTestSuite();
+        unitTests.runUnitTestSuite();
+        IntegrationTestSuite integrationTests = new IntegrationTestSuite();
+        integrationTests.runIntegrationTestSuite();
+        MultiThreadTestSuite multiThreadTests = new MultiThreadTestSuite();
+        multiThreadTests.runMultiThreadTestSuite();
         //test
 
     }

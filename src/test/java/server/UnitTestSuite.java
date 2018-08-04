@@ -8,7 +8,7 @@ import java.util.Collections;
 public class UnitTestSuite {
 
     @Test
-    public static void runUnitTestSuite(){
+    public void runUnitTestSuite(){
         InventoryItemUnitTests();
         OrderUnitTests();
         ListenerUnitTests();
@@ -17,7 +17,7 @@ public class UnitTestSuite {
     }
 
     @Test
-    public static void InventoryItemUnitTests(){
+    public void InventoryItemUnitTests(){
         ArrayList<InventoryItem> inventoryList = new ArrayList<>();
 
         //Test Qty Values
@@ -71,13 +71,13 @@ public class UnitTestSuite {
     }
 
     @Test
-    public static void OrderUnitTests(){
+    public void OrderUnitTests(){
         //TODO: Test Order constructor:
         //TODO:     Order(int idParam, String usernameParam, String productNameParam, int qtyParam)
     }
 
     @Test
-    public static void ListenerUnitTests(){
+    public void ListenerUnitTests(){
         //TODO: Test Listener constructor and thread spawning
         //TODO:    Listener(String protocolParam, int portParam)
         //TODO:    void run()
@@ -85,7 +85,7 @@ public class UnitTestSuite {
     }
 
     @Test
-    public static void ServerThreadUnitTests(){
+    public void ServerThreadUnitTests(){
         //TODO: Test ServerThread, individual functions, and thread spawning:
         //TODO:     ServerThread(Socket tcpClientSocketParam, int tcpPort)
         //TODO:     String processMessage(String[] msgArray)
@@ -98,7 +98,7 @@ public class UnitTestSuite {
     }
 
     @Test
-    public static void ServerUnitTests(){
+    public void ServerUnitTests(){
         //TODO: Test main:
         //TODO:     void main(String[] args)
 
