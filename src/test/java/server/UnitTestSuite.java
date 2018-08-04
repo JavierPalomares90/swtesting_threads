@@ -2,6 +2,7 @@ package server;
 
 import org.junit.Test;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -11,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 
 public class UnitTestSuite {
 
-    @Test
     public void runUnitTestSuite(){
         InventoryItemUnitTests();
         OrderUnitTests();
@@ -81,10 +81,43 @@ public class UnitTestSuite {
         }
     }
 
-    @Test
     public void OrderUnitTests(){
-        //TODO: Test Order constructor:
-        //TODO:     Order(int idParam, String usernameParam, String productNameParam, int qtyParam)
+        OrderNullProductnameTest();
+        OrderNullUsernameTest();
+        OrderConstructorTest();
+    }
+
+    @Test(expected = InvalidParameterException.class)
+    public void OrderNullUsernameTest(){
+        int id = 0;
+        String username = null;
+        String productName = "bar";
+        int qty = 1;
+        Order order = new Order(id,username,productName,qty);
+    }
+
+    @Test(expected = InvalidParameterException.class)
+    public void OrderNullProductnameTest(){
+        int id = 0;
+        String username = "foo";
+        String productName = null;
+        int qty = 1;
+        Order order = new Order(id,username,productName,qty);
+    }
+
+    // Asser the Order parameters are initialized properly
+    @Test
+    public void OrderConstructorTest(){
+        int id = 0;
+        String username = "foo";
+        String productName = "bar";
+        int qty = 1;
+        Order order = new Order(id,username,productName,qty);
+        assertTrue(order != null);
+        assertTrue(order.id == id);
+        assertTrue(order.productName == productName);
+        assertTrue(order.qty == qty);
+
     }
 
     @Test
