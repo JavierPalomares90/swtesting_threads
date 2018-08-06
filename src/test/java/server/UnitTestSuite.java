@@ -140,7 +140,6 @@ public class UnitTestSuite {
             //tcpSocket.close();
         } catch(IOException ioe){System.err.println(ioe);}
         return replyMessage;
-
     }
 
     @Test
