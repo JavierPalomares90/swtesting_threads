@@ -3,7 +3,11 @@ package server;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -122,16 +126,38 @@ public class UnitTestSuite {
         assertTrue(protocol.equals(listener.protocol));
     }
 
+    private static void sendTcpMessage(String cmd, String hostAddress, int tcpPort)
+    {
+        // Send
+        try{
+            //Send message
+            Socket tcpSocket = new Socket(hostAddress, tcpPort);
+            PrintWriter outputWriter = new PrintWriter(tcpSocket.getOutputStream(), true);
+            BufferedReader inputReader = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
+            outputWriter.write(cmd + "\n");
+            outputWriter.flush();
+            //Receive reply
+            String recvLine = "";
+            while((recvLine = inputReader.readLine()) != null) System.out.println(recvLine);
+            //tcpSocket.close();
+        } catch(IOException ioe){System.err.println(ioe);}
+
+    }
+
     @Test
     public void ListenerRunUnitTest(){
-        int tcpPort = 0;
+        int tcpPort = 1024; // This cannot be lower than 1024 on mac
         String protocol = "tcp";
         Listener listener = new Listener(protocol,tcpPort);
 
         ExecutorService service = Executors.newSingleThreadExecutor();
         service.execute(listener);
+        String command = "list";
 
-        // Add something like this.
+
+        String hostAddress = "192.168.1.1";
+        sendTcpMessage(command,hostAddress,tcpPort);
+
         service.shutdown();
         try
         {
