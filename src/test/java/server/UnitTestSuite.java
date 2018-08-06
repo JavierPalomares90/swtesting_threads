@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertTrue;
 
@@ -142,13 +143,16 @@ public class UnitTestSuite {
 
     @Test
     public void ListenerRunUnitTest(){
+        Server.processInventory("./src/test/resources/inventory.txt"); //Setup the inventory list.
+
         int tcpPort = 1234; // This cannot be lower than 1024 on mac
         String protocol = "T";
         // Start off the listener
         Runnable listener = new Listener(protocol, tcpPort);
         new Thread(listener).start();
 
-        // Send a command to the listener
+        // Wait 1 seconds for Listener to start, then send command:
+        try {TimeUnit.SECONDS.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
         String command = "list";
         String hostAddress = "127.0.0.1";
         sendTcpMessage(command,hostAddress,tcpPort);
