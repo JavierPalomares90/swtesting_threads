@@ -156,10 +156,10 @@ public class UnitTestSuite {
         try {TimeUnit.SECONDS.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
         String command = "list";
         String hostAddress = "127.0.0.1";
-        String replyMessage = sendTcpMessage(command,hostAddress,tcpPort);
-        System.out.println(replyMessage);
-
-        //TODO: What should be asserted here?
+        String response = sendTcpMessage(command,hostAddress,tcpPort);
+        assertTrue(response != null);
+        String expectedResponse = "phone 20; laptop 15; camera 10; ps4 17; xbox 8; ";
+        assertTrue(expectedResponse.equals(response));
     }
 
     @Test
