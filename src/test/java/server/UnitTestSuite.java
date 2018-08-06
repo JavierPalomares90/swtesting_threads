@@ -1,11 +1,13 @@
 package server;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -137,11 +139,20 @@ public class UnitTestSuite {
             String recvLine = "";
             while((recvLine = inputReader.readLine()) != null)// System.out.println(recvLine);
                 replyMessage += recvLine;
-            //tcpSocket.close();
+            tcpSocket.close();
         } catch(IOException ioe){System.err.println(ioe);}
         return replyMessage;
     }
 
+    private static Socket getTcpSocket()
+    {
+        //TODO: finish
+        return null;
+    }
+
+    /**
+     * Test the listener processes the request and returns the expected response
+     */
     @Test
     public void ListenerRunUnitTest(){
         Server.processInventory("./src/test/resources/inventory.txt"); //Setup the inventory list.
@@ -164,22 +175,55 @@ public class UnitTestSuite {
 
     @Test
     public void ServerThreadUnitTests(){
-        //TODO: Test ServerThread, individual functions, and thread spawning:
-        //TODO:     ServerThread(Socket tcpClientSocketParam, int tcpPort)
-        //TODO:     String processMessage(String[] msgArray)
-        //TODO:     String purchase(String[] msgArray)
-        //TODO:     String cancel(String[] msgArray)
-        //TODO:     String search(String[] msgArray)
-        //TODO:     String list()
-        //TODO:     void run()
+        Server.processInventory("./src/test/resources/inventory.txt"); //Setup the inventory list.
 
-    }
+        String hostAddress = "127.0.0.1";
+        int tcpPort = 1234; // This cannot be lower than 1024 on mac
+        // Spin off the serverThread
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    ServerSocket tcpServerSocket = new ServerSocket(tcpPort);
+                    while (true)
+                    {
+                        Socket tcpClientSocket = tcpServerSocket.accept();
+                        Runnable tcpServerThread = new ServerThread(tcpClientSocket, tcpPort);
+                        new Thread(tcpServerThread).start();
 
-    @Test
-    public void ServerUnitTests(){
-        //TODO: Test main:
-        //TODO:     void main(String[] args)
+                    }
+                }catch (Exception e)
+                {
+                    System.err.println(e.getMessage());
+                    Assert.fail();
+                }
+            }
+        }).start();
 
+        // Wait 1 seconds for Listener to start, then send command:
+        try
+        {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        // Send a message to the ServerThread
+        String listCommand = "list";
+        String response = sendTcpMessage(listCommand,hostAddress,tcpPort);
+        // Assert that the server processes a list command correctly
+        assertTrue(response != null);
+        String expectedResponse = "phone 20; laptop 15; camera 10; ps4 17; xbox 8; ";
+        assertTrue(expectedResponse.equals(response));
+        // TODO: Finish testing purchase/cancel/search commands
+        String purchaseCommand = "purchase bob camera 1";
+        response = sendTcpMessage(purchaseCommand,hostAddress,tcpPort);
+        String searchCommand = "search bob";
+        response = sendTcpMessage(searchCommand,hostAddress,tcpPort);
+        String cancelCommand = "";
     }
 
 }
