@@ -1,6 +1,5 @@
 package server;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -13,9 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertTrue;
 
@@ -119,7 +115,7 @@ public class UnitTestSuite {
     public void ListenerConstructorTest()
     {
         int tcpPort = 0;
-        String protocol = "tcp";
+        String protocol = "T";
         Listener listener = new Listener(protocol,tcpPort);
         assertTrue(listener != null);
         assertTrue(tcpPort == listener.tcpPort);
@@ -147,25 +143,15 @@ public class UnitTestSuite {
     @Test
     public void ListenerRunUnitTest(){
         int tcpPort = 1234; // This cannot be lower than 1024 on mac
-        String protocol = "tcp";
-        Listener listener = new Listener(protocol,tcpPort);
+        String protocol = "T";
+        // Start off the listener
+        Runnable listener = new Listener(protocol, tcpPort);
+        new Thread(listener).start();
 
-        ExecutorService service = Executors.newSingleThreadExecutor();
-        service.execute(listener);
+        // Send a command to the listener
         String command = "list";
-
-
-        String hostAddress = "192.168.1.1";
+        String hostAddress = "127.0.0.1";
         sendTcpMessage(command,hostAddress,tcpPort);
-
-        service.shutdown();
-        try
-        {
-            service.awaitTermination(60, TimeUnit.SECONDS);
-        }catch (InterruptedException e)
-        {
-            Assert.fail(e.getMessage());
-        }
 
         //TODO: What should be asserted here?
     }
