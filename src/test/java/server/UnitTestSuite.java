@@ -146,7 +146,7 @@ public class UnitTestSuite {
 
     @Test
     public void ListenerRunUnitTest(){
-        int tcpPort = 1024; // This cannot be lower than 1024 on mac
+        int tcpPort = 1234; // This cannot be lower than 1024 on mac
         String protocol = "tcp";
         Listener listener = new Listener(protocol,tcpPort);
 
