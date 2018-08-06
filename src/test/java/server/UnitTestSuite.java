@@ -123,9 +123,9 @@ public class UnitTestSuite {
         assertTrue(protocol.equals(listener.protocol));
     }
 
-    private static void sendTcpMessage(String cmd, String hostAddress, int tcpPort)
+    private static String sendTcpMessage(String cmd, String hostAddress, int tcpPort)
     {
-        // Send
+        String replyMessage = "";
         try{
             //Send message
             Socket tcpSocket = new Socket(hostAddress, tcpPort);
@@ -135,9 +135,11 @@ public class UnitTestSuite {
             outputWriter.flush();
             //Receive reply
             String recvLine = "";
-            while((recvLine = inputReader.readLine()) != null) System.out.println(recvLine);
+            while((recvLine = inputReader.readLine()) != null)// System.out.println(recvLine);
+                replyMessage += recvLine;
             //tcpSocket.close();
         } catch(IOException ioe){System.err.println(ioe);}
+        return replyMessage;
 
     }
 
@@ -155,7 +157,8 @@ public class UnitTestSuite {
         try {TimeUnit.SECONDS.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
         String command = "list";
         String hostAddress = "127.0.0.1";
-        sendTcpMessage(command,hostAddress,tcpPort);
+        String replyMessage = sendTcpMessage(command,hostAddress,tcpPort);
+        System.out.println(replyMessage);
 
         //TODO: What should be asserted here?
     }
