@@ -7,78 +7,91 @@ import gov.nasa.jpf.vm.Verify;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 
-import static org.junit.Assert.assertTrue;
+public class MultiThreadTestSuite{
 
-public class MultiThreadTestSuite {
 
-   @Test
+    @Test
     public void multiThreadTestSuite(){
+       int numberOfLoops = 5;
 
+       Server.processInventory("./src/test/resources/inventory2.txt"); //Setup the inventory list.
 
-        Server.processInventory("./src/test/resources/inventory2.txt"); //Setup the inventory list.
+       String hostAddress = "127.0.0.1";
+       int tcpPort = 4567;
 
-        String hostAddress = "127.0.0.1";
-        int tcpPort = 4567; // This cannot be lower than 1024 on mac
+       // Spin off the serverThread
+       class serverRunner implements Runnable{
+           @Override
+           public void run()
+           {
+               try
+               {
+                   ServerSocket tcpServerSocket = new ServerSocket(tcpPort);
+                   while (true)
+                   {
+                       Socket tcpClientSocket = tcpServerSocket.accept();
+                       Runnable tcpServerThread = new ServerThread(tcpClientSocket, tcpPort);
+                       new Thread(tcpServerThread).start();
+                   }
+               }catch (Exception e)
+               {
+                   System.err.println(e.getMessage());
+                   Assert.fail();
+               }
+           }
+       }
 
-        // Spin off the serverThread
-        new Thread(new Runnable()
-        {
+       serverRunner sr = new serverRunner();
+       Thread ts = new Thread(sr);
+       ts.start();
+
+       // Wait 1 seconds for Listener to start, then send command:
+
+       try
+       {
+           TimeUnit.SECONDS.sleep(1);
+       } catch (InterruptedException e)
+       {
+           e.printStackTrace();
+       }
+
+       String[] customerArray = new String[]{"Adam", "Bob", "Charlie", "David", "Erik", "Frank", "George"};
+
+       class clientRunner implements Runnable{
+            private String name;
+            public clientRunner(String threadName){
+                name = threadName;
+            }
+
             @Override
             public void run()
             {
-                try
-                {
-                    ServerSocket tcpServerSocket = new ServerSocket(tcpPort);
-                    while (true)
-                    {
-                        Socket tcpClientSocket = tcpServerSocket.accept();
-                        Runnable tcpServerThread = new ServerThread(tcpClientSocket, tcpPort);
-                        new Thread(tcpServerThread).start();
-
-                    }
-                }catch (Exception e)
-                {
-                    System.err.println(e.getMessage());
-                    Assert.fail();
+                String hostAddress = "127.0.0.1";
+                int tcpPort = 4567;
+                LinkedList<String>inventoryItems = new LinkedList<>();
+                // Get Inventory List and populate Inventory Items List
+                String listCommand = "list";
+                String listreply = TestSuite.sendTcpMessage(listCommand,hostAddress,tcpPort);
+                String[] listreplyArray = listreply.split(";");
+                for(String elem : listreplyArray){
+                    if(elem.trim().split(" ")[0].length() > 0)
+                        inventoryItems.add(elem.trim().split(" ")[0]);
                 }
+
+                System.out.println("Name: " + name);
+
+                //TestSuite.sendTcpMessage(listCommand,hostAddress,tcpPort);
+
+                // Random Number: //ThreadLocalRandom.current().nextInt(min, max + 1)
             }
-        }).start();
-
-        // Wait 1 seconds for Listener to start, then send command:
-        try
-        {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException e)
-        {
-            e.printStackTrace();
         }
-        // Create Inventory Item List
-       LinkedList<String>inventoryItems = new LinkedList<>();
-       // Create Customer Name List
-       String[] customerList = new String[]{"Adam", "Bob", "Charlie", "David", "Erik", "Frank", "George"};
-       // Create Orders List
-       LinkedList<Integer> orderIdList = new LinkedList<Integer>();
-
-        // Get Inventory List
-        String listCommand = "list";
-        String listreply = TestSuite.sendTcpMessage(listCommand,hostAddress,tcpPort);
-        String[] listreplyArray = listreply.split(";");
-        for(String elem : listreplyArray){
-            System.out.println(elem.trim());
-            if(elem.trim().split(" ")[0].length() > 0)
-                inventoryItems.add(elem.trim().split(" ")[0]);
-
-        }
-
-        //TODO: Generate random commands to the Server:
-       //When command is "purchase" add order ID to orderIdList
-       //When command is "cancel" remove order ID from orderIdList
-       
+        clientRunner cr = new clientRunner(customerArray[Verify.getInt(0,customerArray.length)]);
+        Thread tc = new Thread(cr);
+        tc.start();
 
     }
-
-
 }
