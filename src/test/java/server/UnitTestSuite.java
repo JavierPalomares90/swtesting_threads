@@ -125,24 +125,6 @@ public class UnitTestSuite {
         assertTrue(protocol.equals(listener.protocol));
     }
 
-    private static String sendTcpMessage(String cmd, String hostAddress, int tcpPort)
-    {
-        String replyMessage = "";
-        try{
-            //Send message
-            Socket tcpSocket = new Socket(hostAddress, tcpPort);
-            PrintWriter outputWriter = new PrintWriter(tcpSocket.getOutputStream(), true);
-            BufferedReader inputReader = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
-            outputWriter.write(cmd + "\n");
-            outputWriter.flush();
-            //Receive reply
-            String recvLine = "";
-            while((recvLine = inputReader.readLine()) != null)// System.out.println(recvLine);
-                replyMessage += recvLine;
-            tcpSocket.close();
-        } catch(IOException ioe){System.err.println(ioe);}
-        return replyMessage;
-    }
 
     private static Socket getTcpSocket()
     {
@@ -167,7 +149,7 @@ public class UnitTestSuite {
         try {TimeUnit.SECONDS.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
         String command = "list";
         String hostAddress = "127.0.0.1";
-        String response = sendTcpMessage(command,hostAddress,tcpPort);
+        String response = TestSuite.sendTcpMessage(command,hostAddress,tcpPort);
         assertTrue(response != null);
         String expectedResponse = "phone 20; laptop 15; camera 10; ps4 17; xbox 8; ";
         assertTrue(expectedResponse.equals(response));
@@ -213,16 +195,16 @@ public class UnitTestSuite {
         }
         // Send a message to the ServerThread
         String listCommand = "list";
-        String response = sendTcpMessage(listCommand,hostAddress,tcpPort);
+        String response = TestSuite.sendTcpMessage(listCommand,hostAddress,tcpPort);
         // Assert that the server processes a list command correctly
         assertTrue(response != null);
         String expectedResponse = "phone 20; laptop 15; camera 10; ps4 17; xbox 8; ";
         assertTrue(expectedResponse.equals(response));
         // TODO: Finish testing purchase/cancel/search commands
         String purchaseCommand = "purchase bob camera 1";
-        response = sendTcpMessage(purchaseCommand,hostAddress,tcpPort);
+        response = TestSuite.sendTcpMessage(purchaseCommand,hostAddress,tcpPort);
         String searchCommand = "search bob";
-        response = sendTcpMessage(searchCommand,hostAddress,tcpPort);
+        response = TestSuite.sendTcpMessage(searchCommand,hostAddress,tcpPort);
         String cancelCommand = "";
     }
 

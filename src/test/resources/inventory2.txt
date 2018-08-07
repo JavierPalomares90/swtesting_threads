@@ -1,0 +1,9 @@
+phone 200
+laptop 150
+camera 100
+ps4 170
+xbox 85
+helicopter 245
+motorcycle 970
+automobile 210
+server 521
