@@ -1,0 +1,23 @@
+Testing Multithreaded Applications
+
+Abstract
+  The problem of developing software testing techniques for multithreaded applications.
+
+Introduction
+  Testing of multithreaded applications introduces unique problems as compared to single-threaded software.  Problems such as concurrency, race conditions, and .... need to be understood and evaluated through 
+  
+Technique
+  To test a simple multithreaded storefront application, we followed a three-phased design.  First, we decompose the application into distinct modules appropriate for unit testing.  Next we performed integration testing in order to identify faults related to the interaction between modules.  Finally we performed multithreaded testing to simulate multiple clients simultaneously interacting with the server.
+
+Illustration
+  <<Control flow diagram>>
+  <<Multithreaded control flow diagram>>
+
+Evaluation
+  <<How well did the testing work?>>
+    
+Related Work
+  <<Any other papers/techniques on the subject>>
+  
+Conclusion
+  <<Final thoughts>>
