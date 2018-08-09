@@ -14,50 +14,20 @@ import java.util.concurrent.TimeUnit;
 public class MultiThreadTestSuite{
 
 
-    @Test
+    /*@Test
     public void multiThreadTestSuite(){
        int numberOfLoops = 5;
 
        Server.processInventory("./src/test/resources/inventory2.txt"); //Setup the inventory list.
 
        String hostAddress = "127.0.0.1";
-       int tcpPort = 4567;
+       int tcpPort = 1234;
 
        // Spin off the serverThread
-       class serverRunner implements Runnable{
-           @Override
-           public void run()
-           {
-               try
-               {
-                   ServerSocket tcpServerSocket = new ServerSocket(tcpPort);
-                   while (true)
-                   {
-                       Socket tcpClientSocket = tcpServerSocket.accept();
-                       Runnable tcpServerThread = new ServerThread(tcpClientSocket, tcpPort);
-                       new Thread(tcpServerThread).start();
-                   }
-               }catch (Exception e)
-               {
-                   System.err.println(e.getMessage());
-                   Assert.fail();
-               }
-           }
-       }
-
-       serverRunner sr = new serverRunner();
-       Thread ts = new Thread(sr);
-       ts.start();
+       Listener server = TestSuite.startServer(tcpPort);
 
        // Wait 1 seconds for Listener to start, then send command:
-
-       try
-       {
-           TimeUnit.SECONDS.sleep(1);
-       } catch (InterruptedException e)
-       {
-           e.printStackTrace();
-       }
+       try{TimeUnit.SECONDS.sleep(1);} catch (InterruptedException e){e.printStackTrace();}
 
        String[] customerArray = new String[]{"Adam", "Bob", "Charlie", "David", "Erik", "Frank", "George"};
 
@@ -93,5 +63,5 @@ public class MultiThreadTestSuite{
         Thread tc = new Thread(cr);
         tc.start();
 
-    }
+    }*/
 }

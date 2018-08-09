@@ -3,6 +3,7 @@ package server;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertTrue;
 
@@ -10,21 +11,25 @@ public class IntegrationTestSuite {
 
     @Test
     public void integrationTestSuite(){
-        int tcpPort = 3456;
+        int tcpPort = 1234;
         String hostAddress = "127.0.0.1";
         // Clear the inventory
         ServerThread.invList = new ArrayList<>();
         ServerThread.maxOrderID = 100;
         String inventory = "src/test/resources/inventory.txt";
-        String[] inputs = new String[]{"3456", inventory};
+        String[] inputs = new String[]{"1234", inventory};
+
         // Start up the server
-        Server.main(inputs);
+        //Server.main(inputs);
+        try {TimeUnit.SECONDS.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
+
+        Listener server = TestSuite.startServer(tcpPort, inventory);
 
         // Send a message to the ServerThread
         String listCommand = "list";
         String response = TestSuite.sendTcpMessage(listCommand,hostAddress,tcpPort);
-        //TODO: Why is this println runinng twice?
-        System.out.println(response);
+        //TODO: Why is this println running twice?
+
 
         // Send a message to the ServerThread
         response = TestSuite.sendTcpMessage(listCommand,hostAddress,tcpPort);
@@ -95,5 +100,8 @@ public class IntegrationTestSuite {
         assertTrue(response != null);
         expectedResponse = "102 not found, no such order";
         assertTrue(expectedResponse.equals(response));
+
+        server.stop();
+
     }
 }

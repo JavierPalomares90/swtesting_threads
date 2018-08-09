@@ -63,11 +63,17 @@ class Listener implements Runnable
 {
     public String protocol;
     public int tcpPort;
+    public volatile boolean running = true;
 
     public Listener(String protocolParam, int portParam)
     {
         protocol = protocolParam;
         tcpPort = portParam;
+    }
+
+    public void stop(){
+        running = false;
+        System.out.println("StoppingServer");
     }
 
     public void run()
@@ -76,15 +82,15 @@ class Listener implements Runnable
         {
             ServerSocket tcpServerSocket = new ServerSocket(tcpPort);
             Socket tcpClientSocket;
-            while (true)
+            while (running)
             {
                 tcpClientSocket = tcpServerSocket.accept();
-
-                //Spawn off a TCP main.java.server.ServerThread instance to read the buffer
-                // from the connection which was just accepted
                 Runnable tcpServerThread = new ServerThread(tcpClientSocket, tcpPort);
                 new Thread(tcpServerThread).start();
             }
+            tcpServerSocket.close();
+            System.out.println("ServerStopped");
+            System.exit(0);
 
         } catch (SocketException se)
         {

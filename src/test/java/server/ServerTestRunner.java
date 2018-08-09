@@ -12,6 +12,7 @@ public class ServerTestRunner
         //TODO: Is there a way to close ports at the end of the tests?
 
         Result result = JUnitCore.runClasses(TestSuite.class);
+
         int testCount = result.getRunCount();
         System.out.println("Ran " + testCount + " tests");
 

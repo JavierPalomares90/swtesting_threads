@@ -123,6 +123,8 @@ public class UnitTestSuite {
         assertTrue(listener != null);
         assertTrue(tcpPort == listener.tcpPort);
         assertTrue(protocol.equals(listener.protocol));
+
+        listener.stop();
     }
 
 
@@ -131,38 +133,36 @@ public class UnitTestSuite {
      */
     @Test
     public void ListenerRunUnitTest(){
-        // Clear the inventory
-        ServerThread.invList = new ArrayList<>();
-        // Populate the inventory if it's empty
-        Server.processInventory("./src/test/resources/inventory.txt"); //Setup the inventory list.
 
-        int tcpPort = 1238; // This cannot be lower than 1024 on mac
-        String protocol = "T";
-        // Start off the listener
-        Runnable listener = new Listener(protocol, tcpPort);
-        new Thread(listener).start();
+        int tcpPort = 1234; // This cannot be lower than 1024 on mac
+        String inventoryFile = "./src/test/resources/inventory.txt";
+        Listener server = TestSuite.startServer(tcpPort, inventoryFile);
 
-        // Wait 1 seconds for Listener to start, then send command:
-        try {TimeUnit.SECONDS.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
         String command = "list";
         String hostAddress = "127.0.0.1";
         String response = TestSuite.sendTcpMessage(command,hostAddress,tcpPort);
+
         assertTrue(response != null);
+
         String expectedResponse = "phone 20; laptop 15; camera 10; ps4 17; xbox 8; ";
         assertTrue(expectedResponse.equals(response));
+
+        server.stop();
+
     }
+
+
 
     // Test for ServerThread Class. Tests satisfy node coverage
     @Test
     public void ServerThreadUnitTests(){
-        // Clear the inventory
-        ServerThread.invList = new ArrayList<>();
-
-        // Populate the inventory if it's empty
-        Server.processInventory("./src/test/resources/inventory.txt"); //Setup the inventory list.
 
         String hostAddress = "127.0.0.1";
-        int tcpPort = 1236; // This cannot be lower than 1024 on mac
+        int tcpPort = 1234; // This cannot be lower than 1024 on mac
+        String inventoryFile = "./src/test/resources/inventory.txt";
+
+        Listener server = TestSuite.startServer(tcpPort, inventoryFile );
+        /*
         // Spin off the serverThread
         new Thread(new Runnable()
         {
@@ -175,10 +175,11 @@ public class UnitTestSuite {
                     while (true)
                     {
                         Socket tcpClientSocket = tcpServerSocket.accept();
-                        Runnable tcpServerThread = new ServerThread(tcpClientSocket, tcpPort);
+                        Runnable tcpServerThread = new ServerThread(tcpClientSocket, tcpPort, tcpServerSocket);
                         new Thread(tcpServerThread).start();
 
                     }
+
                 }catch (Exception e)
                 {
                     System.err.println(e.getMessage());
@@ -186,6 +187,7 @@ public class UnitTestSuite {
                 }
             }
         }).start();
+        */
 
         // Wait 1 seconds for Listener to start, then send command:
         try
@@ -264,6 +266,8 @@ public class UnitTestSuite {
         assertTrue(response != null);
         expectedResponse = "102 not found, no such order";
         assertTrue(expectedResponse.equals(response));
+
+        server.stop();
     }
 
 }
