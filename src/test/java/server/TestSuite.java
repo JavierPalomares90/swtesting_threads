@@ -37,4 +37,9 @@ public class TestSuite {
         return replyMessage;
     }
 
+    public static void hangup()
+    {
+        //TODO: Finish implementation
+    }
+
 }

@@ -131,11 +131,10 @@ public class UnitTestSuite {
      */
     @Test
     public void ListenerRunUnitTest(){
-        if(ServerThread.invList.isEmpty() == true)
-        {
-            // Populate the inventory if it's empty
-            Server.processInventory("./src/test/resources/inventory.txt"); //Setup the inventory list.
-        }
+        // Clear the inventory
+        ServerThread.invList = new ArrayList<>();
+        // Populate the inventory if it's empty
+        Server.processInventory("./src/test/resources/inventory.txt"); //Setup the inventory list.
 
         int tcpPort = 1238; // This cannot be lower than 1024 on mac
         String protocol = "T";
@@ -156,11 +155,11 @@ public class UnitTestSuite {
     // Test for ServerThread Class. Tests satisfy node coverage
     @Test
     public void ServerThreadUnitTests(){
-        if(ServerThread.invList.isEmpty() == true)
-        {
-            // Populate the inventory if it's empty
-            Server.processInventory("./src/test/resources/inventory.txt"); //Setup the inventory list.
-        }
+        // Clear the inventory
+        ServerThread.invList = new ArrayList<>();
+
+        // Populate the inventory if it's empty
+        Server.processInventory("./src/test/resources/inventory.txt"); //Setup the inventory list.
 
         String hostAddress = "127.0.0.1";
         int tcpPort = 1236; // This cannot be lower than 1024 on mac
@@ -203,7 +202,6 @@ public class UnitTestSuite {
         assertTrue(response != null);
         String expectedResponse = "phone 20; laptop 15; camera 10; ps4 17; xbox 8; ";
         assertTrue(expectedResponse.equals(response));
-        // TODO: Finish testing purchase/cancel/search commands
         // Assert that a purchase command is processed successfully
         String purchaseCommand = "purchase bob camera 1";
         response = TestSuite.sendTcpMessage(purchaseCommand,hostAddress,tcpPort);
