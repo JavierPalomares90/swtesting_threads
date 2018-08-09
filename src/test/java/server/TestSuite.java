@@ -53,10 +53,4 @@ public class TestSuite {
         return myListener;
     }
 
-
-    public static void hangup()
-    {
-        //TODO: Finish implementation
-    }
-
 }

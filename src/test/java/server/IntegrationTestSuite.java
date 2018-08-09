@@ -28,16 +28,14 @@ public class IntegrationTestSuite {
         // Send a message to the ServerThread
         String listCommand = "list";
         String response = TestSuite.sendTcpMessage(listCommand,hostAddress,tcpPort);
-        //TODO: Why is this println running twice?
 
-
-        // Send a message to the ServerThread
-        response = TestSuite.sendTcpMessage(listCommand,hostAddress,tcpPort);
         // Assert that the server processes a list command correctly
         assertTrue(response != null);
         // response should be sorted
         String expectedResponse = "camera 10; laptop 15; phone 20; ps4 17; xbox 8; ";
         assertTrue(expectedResponse.equals(response));
+
+
         // Assert that a purchase command is processed successfully
         String purchaseCommand = "purchase bob camera 1";
         response = TestSuite.sendTcpMessage(purchaseCommand,hostAddress,tcpPort);

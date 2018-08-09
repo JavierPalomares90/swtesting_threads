@@ -250,6 +250,7 @@ class ServerThread implements Runnable
                 outputWriter.flush();
                 outputWriter.close();
             }
+            tcpClientSocket.close();
 
         } catch (SocketException se)
         {
@@ -280,6 +281,7 @@ public class Server
                     }
                 }
             }
+            Collections.sort(ServerThread.invList, InventoryItem.ItemComparator);  //Sort the inventory items by name
         }catch(IOException e){System.out.println("IOException reading inventory file; " + e);}
     }
 
@@ -300,7 +302,6 @@ public class Server
 
         processInventory(fileName);
 
-        Collections.sort(ServerThread.invList, InventoryItem.ItemComparator);  //Sort the inventory items by name
 
         //spawn tcpListener;
         Runnable tr = new Listener("T", tcpPort);

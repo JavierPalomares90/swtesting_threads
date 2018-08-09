@@ -1,20 +1,12 @@
 package server;
 
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertTrue;
 
@@ -114,6 +106,7 @@ public class UnitTestSuite {
 
     }
 
+
     @Test
     public void ListenerConstructorTest()
     {
@@ -128,9 +121,7 @@ public class UnitTestSuite {
     }
 
 
-    /**
-     * Test the listener processes the request and returns the expected response
-     */
+    // Test the listener processes the request and returns the expected response
     @Test
     public void ListenerRunUnitTest(){
 
@@ -144,7 +135,7 @@ public class UnitTestSuite {
 
         assertTrue(response != null);
 
-        String expectedResponse = "phone 20; laptop 15; camera 10; ps4 17; xbox 8; ";
+        String expectedResponse = "camera 10; laptop 15; phone 20; ps4 17; xbox 8; ";
         assertTrue(expectedResponse.equals(response));
 
         server.stop();
@@ -162,6 +153,7 @@ public class UnitTestSuite {
         String inventoryFile = "./src/test/resources/inventory.txt";
 
         Listener server = TestSuite.startServer(tcpPort, inventoryFile );
+
         /*
         // Spin off the serverThread
         new Thread(new Runnable()
@@ -187,22 +179,16 @@ public class UnitTestSuite {
                 }
             }
         }).start();
-        */
 
-        // Wait 1 seconds for Listener to start, then send command:
-        try
-        {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
+*/
+
+
         // Send a message to the ServerThread
         String listCommand = "list";
         String response = TestSuite.sendTcpMessage(listCommand,hostAddress,tcpPort);
         // Assert that the server processes a list command correctly
         assertTrue(response != null);
-        String expectedResponse = "phone 20; laptop 15; camera 10; ps4 17; xbox 8; ";
+        String expectedResponse = "camera 10; laptop 15; phone 20; ps4 17; xbox 8; ";
         assertTrue(expectedResponse.equals(response));
         // Assert that a purchase command is processed successfully
         String purchaseCommand = "purchase bob camera 1";
@@ -269,5 +255,4 @@ public class UnitTestSuite {
 
         server.stop();
     }
-
 }
