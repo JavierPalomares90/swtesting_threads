@@ -9,10 +9,6 @@ public class ServerTestRunner
 {
     public static void main(String[] args)
     {
-        String[] inputs = new String[]{"1234", "src/test/resources/inventory.txt"};
-        Server.main(inputs);
-
-        System.out.println("Size of inventory list: " + ServerThread.invList.size());
 
         Result result = JUnitCore.runClasses(TestSuite.class);
         int testCount = result.getRunCount();

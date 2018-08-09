@@ -131,9 +131,13 @@ public class UnitTestSuite {
      */
     @Test
     public void ListenerRunUnitTest(){
-        Server.processInventory("./src/test/resources/inventory.txt"); //Setup the inventory list.
+        if(ServerThread.invList.isEmpty() == true)
+        {
+            // Populate the inventory if it's empty
+            Server.processInventory("./src/test/resources/inventory.txt"); //Setup the inventory list.
+        }
 
-        int tcpPort = 1234; // This cannot be lower than 1024 on mac
+        int tcpPort = 1238; // This cannot be lower than 1024 on mac
         String protocol = "T";
         // Start off the listener
         Runnable listener = new Listener(protocol, tcpPort);
@@ -152,10 +156,14 @@ public class UnitTestSuite {
     // Test for ServerThread Class. Tests satisfy node coverage
     @Test
     public void ServerThreadUnitTests(){
-        Server.processInventory("./src/test/resources/inventory.txt"); //Setup the inventory list.
+        if(ServerThread.invList.isEmpty() == true)
+        {
+            // Populate the inventory if it's empty
+            Server.processInventory("./src/test/resources/inventory.txt"); //Setup the inventory list.
+        }
 
         String hostAddress = "127.0.0.1";
-        int tcpPort = 1234; // This cannot be lower than 1024 on mac
+        int tcpPort = 1236; // This cannot be lower than 1024 on mac
         // Spin off the serverThread
         new Thread(new Runnable()
         {
@@ -243,7 +251,6 @@ public class UnitTestSuite {
         response = TestSuite.sendTcpMessage(misformed,hostAddress,tcpPort);
         assertTrue(response != null);
         expectedResponse = "Incorrect number of parameters for PURCHASE";
-        System.out.println(expectedResponse);
         assertTrue(expectedResponse.equals(response));
 
         // Assert that a misformed cancel request is handled gracefully
