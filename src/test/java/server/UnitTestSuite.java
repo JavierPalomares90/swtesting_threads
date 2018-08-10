@@ -14,6 +14,21 @@ public class UnitTestSuite {
 
     private static Listener server;
 
+    @BeforeClass
+    public static void initServer()
+    {
+        int tcpPort = 1234;
+        String inventoryFile = "src/test/resources/inventory.txt";
+        server = TestSuite.startServer(tcpPort, inventoryFile);
+    }
+
+    @AfterClass
+    public static void stopServer()
+    {
+        server.stop();
+    }
+
+
     @Test
     public void InventoryItemUnitTests(){
         List<InventoryItem> inventoryList = new ArrayList<>();
@@ -122,25 +137,9 @@ public class UnitTestSuite {
         listener.stop();
     }
 
-    @BeforeClass
-    public static void initServer()
-    {
-        int tcpPort = 1234; // This cannot be lower than 1024 on mac
-        String inventoryFile = "./src/test/resources/inventory.txt";
-        server = TestSuite.startServer(tcpPort, inventoryFile);
-    }
-
-    @AfterClass
-    public static void stopServer()
-    {
-        server.stop();
-    }
-
     // Test the listener processes the request and returns the expected response
     @Test
     public void ListenerRunUnitTest(){
-
-
         int tcpPort = 1234; // This cannot be lower than 1024 on mac
         String command = "list";
         String hostAddress = "127.0.0.1";
@@ -150,46 +149,14 @@ public class UnitTestSuite {
 
         String expectedResponse = "camera 10; laptop 15; phone 20; ps4 17; xbox 8; ";
         assertTrue(expectedResponse.equals(response));
-
-
     }
-
-
 
     // Test for ServerThread Class. Tests satisfy node coverage
     @Test
     public void ServerThreadUnitTests(){
 
         String hostAddress = "127.0.0.1";
-        int tcpPort = 1234; // This cannot be lower than 1024 on mac
-        /*
-        // Spin off the serverThread
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    ServerSocket tcpServerSocket = new ServerSocket(tcpPort);
-                    while (true)
-                    {
-                        Socket tcpClientSocket = tcpServerSocket.accept();
-                        Runnable tcpServerThread = new ServerThread(tcpClientSocket, tcpPort, tcpServerSocket);
-                        new Thread(tcpServerThread).start();
-
-                    }
-
-                }catch (Exception e)
-                {
-                    System.err.println(e.getMessage());
-                    Assert.fail();
-                }
-            }
-        }).start();
-
-*/
-
+        int tcpPort = 1234;
 
         // Send a message to the ServerThread
         String listCommand = "list";
@@ -261,6 +228,5 @@ public class UnitTestSuite {
         expectedResponse = "102 not found, no such order";
         assertTrue(expectedResponse.equals(response));
 
-        server.stop();
     }
 }

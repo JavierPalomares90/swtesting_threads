@@ -5,6 +5,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
+
 public class ServerTestRunner
 {
     public static void main(String[] args)
@@ -21,7 +22,5 @@ public class ServerTestRunner
             String methodName = description.getMethodName();
             System.out.println("Failure at method " + methodName + " in " + className);
         }
-
     }
-
 }

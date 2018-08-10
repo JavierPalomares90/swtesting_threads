@@ -73,7 +73,6 @@ class Listener implements Runnable
 
     public void stop(){
         running = false;
-        System.out.println("StoppingServer");
     }
 
     public void run()
@@ -89,8 +88,6 @@ class Listener implements Runnable
                 new Thread(tcpServerThread).start();
             }
             tcpServerSocket.close();
-            System.out.println("ServerStopped");
-            System.exit(0);
 
         } catch (SocketException se)
         {
@@ -301,7 +298,6 @@ public class Server
         String fileName = args[1];
 
         processInventory(fileName);
-
 
         //spawn tcpListener;
         Runnable tr = new Listener("T", tcpPort);

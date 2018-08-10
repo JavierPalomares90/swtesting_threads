@@ -1,9 +1,6 @@
 package server;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import gov.nasa.jpf.vm.Verify;
 
 import java.net.ServerSocket;
@@ -15,23 +12,23 @@ import java.util.concurrent.TimeUnit;
 
 public class MultiThreadTestSuite{
 
-    Listener server;
+    private static Listener server;
 
-    @Before
-    public void startServer()
+    @BeforeClass
+    public static void initServer()
     {
-        String inventoryFile = "src/test/resources/inventory2.txt";
-        String hostAddress = "127.0.0.1";
-        int tcpPort = 4567;
-
+        int tcpPort = 3456;
+        String inventoryFile = "./src/test/resources/inventory2.txt";
         server = TestSuite.startServer(tcpPort, inventoryFile);
     }
 
-    @After
-    public void stopServer()
+    @AfterClass
+    public static void stopServer()
     {
         server.stop();
     }
+
+
 
     @Test
     public void multiThreadTestSuite(){
@@ -50,7 +47,7 @@ public class MultiThreadTestSuite{
             public void run()
             {
                 String hostAddress = "127.0.0.1";
-                int tcpPort = 4567;
+                int tcpPort = 3456;
                 LinkedList<String>inventoryItems = new LinkedList<>();
                 // Get Inventory List and populate Inventory Items List
                 String listCommand = "list";

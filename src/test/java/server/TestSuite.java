@@ -1,5 +1,8 @@
 package server;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -19,7 +22,9 @@ import java.util.concurrent.TimeUnit;
         MultiThreadTestSuite.class
 })
 
+
 public class TestSuite {
+
     public static String sendTcpMessage(String cmd, String hostAddress, int tcpPort)
     {
         String replyMessage = "";
@@ -40,13 +45,14 @@ public class TestSuite {
     }
 
     public static Listener startServer(int tcpPort, String inventoryFile){
-        System.out.println("Starting server at port" + tcpPort);
+//        System.out.println("Starting server at port" + tcpPort);
         ServerThread.invList.clear();
+        ServerThread.orderList.clear();
+        ServerThread.maxOrderID = 100;
         Server.processInventory(inventoryFile);
         String protocol = "T";
         Runnable listener = new Listener(protocol, tcpPort);
         Listener myListener = (Listener) listener;
-        System.out.println("ServerStarted");
         new Thread(listener).start();
 
         try {TimeUnit.SECONDS.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}

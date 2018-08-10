@@ -1,9 +1,6 @@
 package server;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -12,28 +9,27 @@ import static org.junit.Assert.assertTrue;
 
 public class IntegrationTestSuite {
 
-    Listener server;
-    @Before
-    public void iniInv()
+
+    private static Listener server;
+
+    @BeforeClass
+    public static void initServer()
     {
-        int tcpPort = 1235;
-        String hostAddress = "127.0.0.1";
-        String inventory = "src/test/resources/inventory.txt";
-        // Clear the inventory
-        ServerThread.invList = new ArrayList<>();
-        ServerThread.maxOrderID = 100;
-        server = TestSuite.startServer(tcpPort, inventory);
+        int tcpPort = 2345;
+        String inventoryFile = "./src/test/resources/inventory.txt";
+        server = TestSuite.startServer(tcpPort, inventoryFile);
+    }
+
+    @AfterClass
+    public static void stopServer()
+    {
+        server.stop();
     }
 
     @Test
     public void integrationTestSuite(){
-        int tcpPort = 1235;
+        int tcpPort = 2345;
         String hostAddress = "127.0.0.1";
-        String inventory = "src/test/resources/inventory.txt";
-
-        // Start up the server
-        //Server.main(inputs);
-        try {TimeUnit.SECONDS.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
 
         // Send a message to the ServerThread
         String listCommand = "list";
@@ -44,7 +40,6 @@ public class IntegrationTestSuite {
         // response should be sorted
         String expectedResponse = "camera 10; laptop 15; phone 20; ps4 17; xbox 8; ";
         assertTrue(expectedResponse.equals(response));
-
 
         // Assert that a purchase command is processed successfully
         String purchaseCommand = "purchase bob camera 1";
@@ -108,14 +103,6 @@ public class IntegrationTestSuite {
         assertTrue(response != null);
         expectedResponse = "102 not found, no such order";
         assertTrue(expectedResponse.equals(response));
-
-
-    }
-
-    @After
-    public void stopServer()
-    {
-        server.stop();
 
     }
 }
