@@ -40,6 +40,7 @@ public class TestSuite {
     }
 
     public static Listener startServer(int tcpPort, String inventoryFile){
+        System.out.println("Starting server at port" + tcpPort);
         ServerThread.invList.clear();
         Server.processInventory(inventoryFile);
         String protocol = "T";

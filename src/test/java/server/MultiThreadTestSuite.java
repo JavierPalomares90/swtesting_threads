@@ -1,6 +1,8 @@
 package server;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import gov.nasa.jpf.vm.Verify;
 
@@ -13,16 +15,28 @@ import java.util.concurrent.TimeUnit;
 
 public class MultiThreadTestSuite{
 
+    Listener server;
+
+    @Before
+    public void startServer()
+    {
+        String inventoryFile = "src/test/resources/inventory2.txt";
+        String hostAddress = "127.0.0.1";
+        int tcpPort = 4567;
+
+        server = TestSuite.startServer(tcpPort, inventoryFile);
+    }
+
+    @After
+    public void stopServer()
+    {
+        server.stop();
+    }
 
     @Test
     public void multiThreadTestSuite(){
        int numberOfLoops = 5;
 
-       String inventoryFile = "src/test/resources/inventory2.txt";
-       String hostAddress = "127.0.0.1";
-       int tcpPort = 1234;
-
-       Listener server = TestSuite.startServer(tcpPort, inventoryFile);
 
        String[] customerArray = new String[]{"Adam", "Bob", "Charlie", "David", "Erik", "Frank", "George"};
 

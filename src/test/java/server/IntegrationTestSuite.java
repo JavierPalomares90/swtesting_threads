@@ -1,5 +1,8 @@
 package server;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -9,21 +12,28 @@ import static org.junit.Assert.assertTrue;
 
 public class IntegrationTestSuite {
 
-    @Test
-    public void integrationTestSuite(){
-        int tcpPort = 1234;
+    Listener server;
+    @Before
+    public void iniInv()
+    {
+        int tcpPort = 1235;
         String hostAddress = "127.0.0.1";
+        String inventory = "src/test/resources/inventory.txt";
         // Clear the inventory
         ServerThread.invList = new ArrayList<>();
         ServerThread.maxOrderID = 100;
+        server = TestSuite.startServer(tcpPort, inventory);
+    }
+
+    @Test
+    public void integrationTestSuite(){
+        int tcpPort = 1235;
+        String hostAddress = "127.0.0.1";
         String inventory = "src/test/resources/inventory.txt";
-        String[] inputs = new String[]{"1234", inventory};
 
         // Start up the server
         //Server.main(inputs);
         try {TimeUnit.SECONDS.sleep(1);} catch (InterruptedException e) {e.printStackTrace();}
-
-        Listener server = TestSuite.startServer(tcpPort, inventory);
 
         // Send a message to the ServerThread
         String listCommand = "list";
@@ -99,6 +109,12 @@ public class IntegrationTestSuite {
         expectedResponse = "102 not found, no such order";
         assertTrue(expectedResponse.equals(response));
 
+
+    }
+
+    @After
+    public void stopServer()
+    {
         server.stop();
 
     }

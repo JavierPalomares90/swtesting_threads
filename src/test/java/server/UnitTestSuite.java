@@ -1,6 +1,6 @@
 package server;
 
-import org.junit.Test;
+import org.junit.*;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -11,6 +11,8 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 
 public class UnitTestSuite {
+
+    private static Listener server;
 
     @Test
     public void InventoryItemUnitTests(){
@@ -110,7 +112,7 @@ public class UnitTestSuite {
     @Test
     public void ListenerConstructorTest()
     {
-        int tcpPort = 0;
+        int tcpPort = 4560;
         String protocol = "T";
         Listener listener = new Listener(protocol,tcpPort);
         assertTrue(listener != null);
@@ -120,15 +122,26 @@ public class UnitTestSuite {
         listener.stop();
     }
 
+    @BeforeClass
+    public static void initServer()
+    {
+        int tcpPort = 1234; // This cannot be lower than 1024 on mac
+        String inventoryFile = "./src/test/resources/inventory.txt";
+        server = TestSuite.startServer(tcpPort, inventoryFile);
+    }
+
+    @AfterClass
+    public static void stopServer()
+    {
+        server.stop();
+    }
 
     // Test the listener processes the request and returns the expected response
     @Test
     public void ListenerRunUnitTest(){
 
-        int tcpPort = 1234; // This cannot be lower than 1024 on mac
-        String inventoryFile = "./src/test/resources/inventory.txt";
-        Listener server = TestSuite.startServer(tcpPort, inventoryFile);
 
+        int tcpPort = 1234; // This cannot be lower than 1024 on mac
         String command = "list";
         String hostAddress = "127.0.0.1";
         String response = TestSuite.sendTcpMessage(command,hostAddress,tcpPort);
@@ -138,7 +151,6 @@ public class UnitTestSuite {
         String expectedResponse = "camera 10; laptop 15; phone 20; ps4 17; xbox 8; ";
         assertTrue(expectedResponse.equals(response));
 
-        server.stop();
 
     }
 
@@ -150,10 +162,6 @@ public class UnitTestSuite {
 
         String hostAddress = "127.0.0.1";
         int tcpPort = 1234; // This cannot be lower than 1024 on mac
-        String inventoryFile = "./src/test/resources/inventory.txt";
-
-        Listener server = TestSuite.startServer(tcpPort, inventoryFile );
-
         /*
         // Spin off the serverThread
         new Thread(new Runnable()
