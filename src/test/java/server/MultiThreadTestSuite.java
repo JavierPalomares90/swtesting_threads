@@ -1,14 +1,12 @@
 package server;
 
+import gov.nasa.jpf.vm.ThreadInfo;
 import org.junit.*;
-import gov.nasa.jpf.vm.Verify;
 
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.LinkedList;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+import java.lang.Math.*;
 
 public class MultiThreadTestSuite{
 
@@ -57,18 +55,36 @@ public class MultiThreadTestSuite{
                     if(elem.trim().split(" ")[0].length() > 0)
                         inventoryItems.add(elem.trim().split(" ")[0]);
                 }
+                System.out.println(name + " : " + inventoryItems);
 
-                System.out.println("Name: " + name);
+                //TODO: Send a series of purchases to server, search for orders, parse the orders for orderIDs
+                //TODO:     then cancel the orders, exit.
 
                 //TestSuite.sendTcpMessage(listCommand,hostAddress,tcpPort);
 
                 // Random Number: //ThreadLocalRandom.current().nextInt(min, max + 1)
             }
         }
-        clientRunner cr = new clientRunner(customerArray[Verify.getInt(0,customerArray.length)]);
-        Thread tc = new Thread(cr);
-        tc.start();
 
-        
+        //Start up a list of Client threads
+        LinkedList<Thread> threadList = new LinkedList<>();
+        for(int i = 0; i < numberOfLoops; i++) {
+            clientRunner cr = new clientRunner(customerArray[i]);
+            Thread tc = new Thread(cr);
+            tc.setName(customerArray[i]);
+            threadList.add(tc);
+            tc.start();
+        }
+
+        //Check all the threads and wait till they all complete, THEN proceed with ending the method.
+        boolean allDone = false;
+        while(!allDone){
+            allDone = true;
+            for(Thread thread : threadList){
+                if(thread.getState() != Thread.State.TERMINATED){
+                    allDone = false;
+                }
+            }
+        }
     }
 }
