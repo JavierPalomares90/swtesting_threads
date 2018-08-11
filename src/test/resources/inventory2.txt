@@ -1,8 +1,8 @@
 phone 200
 laptop 150
-camera 100
+camera 106
 ps4 170
-xbox 85
+xbox 852
 helicopter 245
 motorcycle 970
 automobile 210

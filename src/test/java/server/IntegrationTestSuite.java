@@ -2,9 +2,6 @@ package server;
 
 import org.junit.*;
 
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-
 import static org.junit.Assert.assertTrue;
 
 public class IntegrationTestSuite {
@@ -52,7 +49,7 @@ public class IntegrationTestSuite {
         String searchCommand = "search bob";
         response = TestSuite.sendTcpMessage(searchCommand,hostAddress,tcpPort);
         assertTrue(response != null);
-        expectedResponse = "101, camera, 1";
+        expectedResponse = "101, camera, 1;";
         assertTrue(expectedResponse.equals(response));
 
         // Assert that a search command is processed successfully

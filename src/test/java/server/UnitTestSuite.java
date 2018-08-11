@@ -176,7 +176,7 @@ public class UnitTestSuite {
         String searchCommand = "search bob";
         response = TestSuite.sendTcpMessage(searchCommand,hostAddress,tcpPort);
         assertTrue(response != null);
-        expectedResponse = "101, camera, 1";
+        expectedResponse = "101, camera, 1;";
         assertTrue(expectedResponse.equals(response));
 
         // Assert that a search command is processed successfully

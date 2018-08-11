@@ -212,7 +212,7 @@ class ServerThread implements Runnable
             if (myOrder.username.equals(msgArray[1]))
             {
                 foundOrder = 1;
-                replyMessage += myOrder.id + ", " + myOrder.productName + ", " + myOrder.qty + "\n";
+                replyMessage += myOrder.id + ", " + myOrder.productName + ", " + myOrder.qty + ";\n";
             }
         }
         if (foundOrder == 0) return replyMessage = "No order found for " + msgArray[1];
